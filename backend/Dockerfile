@@ -1,27 +1,14 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /App
+COPY . ./
+RUN dotnet restore 
+RUN dotnet publish -o out
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:b4bea3a52a0a77317fa93c5bbdb076623f81e3e2f201078d89914da71318b5d8
+WORKDIR /App
+COPY --from=build /App/out .
+ENTRYPOINT ["dotnet", "backend.dll"]
+
 EXPOSE 8080
 EXPOSE 8081
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["backend.csproj", "."]
-RUN dotnet restore "./backend.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./backend.csproj" -c %BUILD_CONFIGURATION% -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./backend.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "backend.dll"]
