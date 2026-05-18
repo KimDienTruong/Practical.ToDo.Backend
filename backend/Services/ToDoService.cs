@@ -8,17 +8,23 @@ namespace backend.Services
     public class ToDoService
     {
         private readonly ApplicationDbContext _context;
-
-        public ToDoService(ApplicationDbContext context)
+        public ToDoService(ApplicationDbContext dbContext)
         {
-            _context = context;
+            _context = dbContext;
         }
 
-        public async Task<ICollection<ToDoTask>> GetToDoTasksWithPagination(int pageIndex, int pageSize)
+        public async Task<GetToDosResponseDTO> GetToDoTasksWithPagination(string username, int pageIndex, int pageSize)
         {
-            ICollection<ToDoTask> toDoTasks = await _context.ToDoTasks.Skip(pageIndex).Take(pageSize).ToListAsync();
+            IEnumerable<ToDoTask> toDoTasks = await _context.ToDoTasks.Where(x => x.UserName == username).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
-            return toDoTasks;
+            if (!toDoTasks.Any())
+            {
+
+            }
+
+            int total = await _context.ToDoTasks.Where(x => x.UserName == username).CountAsync();
+
+            return new GetToDosResponseDTO(toDoTasks, total, pageIndex, pageSize);
         }
 
         public async Task<ToDoTask?> CreateToDo(CreateToDoDTO createToDoDTO)
@@ -38,7 +44,7 @@ namespace backend.Services
 
         public async Task<ToDoTask?> UpdateToDo(string id, UpdateToDoDto updateToDoDto)
         {
-            ToDoTask toDoTask = await _context.ToDoTasks.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            ToDoTask? toDoTask = await _context.ToDoTasks.FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             if (toDoTask == null)
             {
@@ -57,7 +63,7 @@ namespace backend.Services
 
         public async Task<bool> DeleteToDo(string id)
         {
-            ToDoTask toDoTask = _context.ToDoTasks.FirstOrDefault(x => x.Id.Equals(id));
+            ToDoTask? toDoTask = await _context.ToDoTasks.FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             if (toDoTask == null)
             {

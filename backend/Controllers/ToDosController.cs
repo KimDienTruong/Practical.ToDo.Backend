@@ -18,16 +18,17 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetToDos(int pageIndex = 0, int pageSize = 5)
+        [Route("/{username}")]
+        public async Task<IActionResult> GetToDos(string username, int pageIndex = 0, int pageSize = 5)
         {
-            ICollection<ToDoTask> toDoTasks = await _toDoService.GetToDoTasksWithPagination(pageIndex, pageSize);
+            GetToDosResponseDTO response = await _toDoService.GetToDoTasksWithPagination(username, pageIndex, pageSize);
 
-            if (toDoTasks.Count == 0)
+            if (!response.Results.Any())
             {
                 return NotFound();
             }
-
-            return Ok(toDoTasks);
+            
+            return Ok(response);
         }
 
         [HttpPost]
