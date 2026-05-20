@@ -4,9 +4,9 @@ namespace backend.Models
 {
     public sealed class User
     {
-        public string UserName { get; }
+        public string UserName { get; private set; }
         public string Password { get; private set; }
-        public string Email { get; }
+        public string Email { get; private set; }
         public IEnumerable<ToDoTask> ToDoTasks { get; } = new List<ToDoTask>();
 
         public User(string userName, string password, string email)
@@ -15,6 +15,8 @@ namespace backend.Models
             Password = password;
             Email = email;
         }
+
+        public User() { }
 
         public void ChangePassword(string newPassword)
         {

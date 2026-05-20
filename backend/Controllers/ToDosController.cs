@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ToDosController : ControllerBase
     {
         private readonly ToDoService _toDoService;
@@ -18,7 +18,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        [Route("/{username}")]
+        [Route("{username}")]
         public async Task<IActionResult> GetToDos(string username, int pageIndex = 0, int pageSize = 5)
         {
             GetToDosResponseDTO response = await _toDoService.GetToDoTasksWithPagination(username, pageIndex, pageSize);

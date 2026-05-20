@@ -34,6 +34,7 @@ namespace backend.Services
             try
             {
                 await _context.ToDoTasks.AddAsync(toDoTask);
+                await _context.SaveChangesAsync();
                 return toDoTask;
             }
             catch

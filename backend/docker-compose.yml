@@ -2,13 +2,15 @@ services:
     api:
         build:
           context: .
-          dockerfile: Dockerfile
-        ports:
-          - "8080:8080"
+          dockerfile: ./Dockerfile
         environment:
+          - ConnectionStrings__DefaultConnection=Server=localhost,1450;Database=ToDo;User Id=sa;Password=Kimdien1105@;TrustServerCertificate=True
           - ASPNETCORE_ENVIRONMENT=Development
+        ports:
+          - "5072:8080"
         depends_on:
           - db
+       
 
     db:
         image: "mcr.microsoft.com/mssql/server:2022-latest"

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
@@ -19,7 +19,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        [Route("/login")]
+        [Route("login")]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
             if (await _authService.Login(loginDTO))
@@ -32,7 +32,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        [Route("/register")]
+        [Route("register")]
         public async Task<IActionResult> Register(RegisterUserDTO registerUserDTO)
         {
             string username = await _authService.CreateUser(registerUserDTO);
@@ -46,7 +46,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        [Route("/email/{email}")]
+        [Route("email/{email}")]
         public async Task<IActionResult> CheckEmailDuplicate(string email)
         {
             if (await _authService.IsEmailDuplicate(email))

@@ -1,14 +1,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /App
-COPY . ./
-RUN dotnet restore 
-RUN dotnet publish -o out
+WORKDIR /src
+COPY ["backend.csproj", "."]
+RUN dotnet restore
 
+COPY . .
+WORKDIR /src
+RUN dotnet build "backend.csproj" -c Release -o /App/build
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:b4bea3a52a0a77317fa93c5bbdb076623f81e3e2f201078d89914da71318b5d8
-WORKDIR /App
-COPY --from=build /App/out .
+FROM build AS publish
+RUN dotnet publish "backend.csproj" -c Release -o /App/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS final
+WORKDIR /app
+EXPOSE 8080
+COPY --from=publish /App/publish .
 ENTRYPOINT ["dotnet", "backend.dll"]
 
-EXPOSE 8080
-EXPOSE 8081

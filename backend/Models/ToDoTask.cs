@@ -18,6 +18,8 @@ namespace backend.Models
             UserName = userName;
         }
 
+        public ToDoTask() { }   
+
         public void UpdateToDo(string? title, string? description, TaskProgress taskProgress = TaskProgress.BackLog)
         {
             if (!string.IsNullOrWhiteSpace(title))

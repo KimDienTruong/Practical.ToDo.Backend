@@ -39,7 +39,7 @@ namespace backend.Services
             }
             catch
             {
-
+                throw new Exception();
             }
 
             return newUser.UserName;
